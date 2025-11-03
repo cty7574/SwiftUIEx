@@ -21,6 +21,7 @@ struct FoundationModelsView: View {
                     .multilineTextAlignment(.leading)
                     .padding()
             }
+            .navigationTitle("Foundation Models")
             .safeAreaBar(edge: .bottom) {
                 HStack {
                     TextField("prompt", text: $prompt)
