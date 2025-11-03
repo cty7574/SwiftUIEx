@@ -62,7 +62,7 @@ struct GenerableModelsView: View {
 struct Todo: Identifiable {
     var id: String
     
-    @Guide(description: "")
+    @Guide(description: "") // 모델이 프로퍼티를 채울 때 필요한 문맥 제공
     var task: String
 }
 
