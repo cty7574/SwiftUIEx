@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var viewModel: ViewModel = .init()
+    
     var body: some View {
         CustomList { progress in
             navBarView(progress)
