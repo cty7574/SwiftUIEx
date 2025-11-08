@@ -16,16 +16,22 @@ struct CustomList<NavBar: View, TopContent: View, Header: View, Content: View>: 
     @State private var headerProgress: CGFloat = 0
     @State private var safeAreaTop: CGFloat = 0
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         List {
             topContent(headerProgress, safeAreaTop)
+                .customListRow()
             
             Section {
                 content
             } header: {
                 header(headerProgress)
+                    .foregroundStyle(foregroundColor)
+                    .customListRow()
             }
         }
+        .listStyle(.plain)
         .listRowSpacing(0)
         .listRowSpacing(0)
         .coordinateSpace(.named("LISTVIEW"))
@@ -34,6 +40,19 @@ struct CustomList<NavBar: View, TopContent: View, Header: View, Content: View>: 
         } action: { newValue in
             safeAreaTop = newValue
         }
+    }
+    
+    var foregroundColor: Color {
+        colorScheme == .dark ? .white : .black
+    }
+}
 
+extension View {
+    @ViewBuilder
+    func customListRow(top: CGFloat = 0, bottom: CGFloat = 0) -> some View {
+        self
+            .listRowInsets(.init(top: top, leading: 0, bottom: bottom, trailing: 0))
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
     }
 }
