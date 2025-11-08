@@ -48,6 +48,9 @@ struct CustomList<NavBar: View, TopContent: View, Header: View, Content: View>: 
         .listStyle(.plain)
         .listRowSpacing(0)
         .listRowSpacing(0)
+        .overlay(alignment: .top) {
+             navBar(headerProgress)
+        }
         .coordinateSpace(.named("LISTVIEW"))
         .onGeometryChange(for: CGFloat.self) { proxy in
             proxy.safeAreaInsets.top

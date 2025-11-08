@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         CustomList { progress in
-            
+            navBarView(progress)
         } topContent: { progress, safeAreaTop in
             heroImage(progress, safeAreaTop)
         } header: { progress in
@@ -44,6 +44,10 @@ struct ContentView: View {
             Text("Apple Foods")
                 .font(.title2.bold())
                 .frame(height: 35)
+                .offset(x: min(progress * 1.1, 1) * 45)
+            
+            let opacity: CGFloat = max(0, 1 - (progress * 1.2))
+            let currentMenuTitleOpacity: CGFloat = max(progress - 0.9, 0) * 10
             
             HStack(spacing: 6) {
                 Image(systemName: "star.fill")
@@ -59,6 +63,16 @@ struct ContentView: View {
                 Text("35-40 **Mins**")
                     .font(.callout)
             }
+            .opacity(opacity)
+            .overlay(alignment: .leading) {
+                Text("Order Again")
+                    .font(.system(size: 14))
+                    .foregroundStyle(.gray)
+                    .fontWeight(.medium)
+                    .contentTransition(.numericText())
+                    .offset(x: 45, y: -5)
+                    .opacity(currentMenuTitleOpacity)
+            }
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
@@ -72,6 +86,35 @@ struct ContentView: View {
                 .padding(.top, backgroundProgress * -100)
                 .shadow(color: .gray.opacity(backgroundProgress * 0.3), radius: 5, x: 0, y: 2)
         }
+    }
+    
+    @ViewBuilder
+    func navBarView(_ progress: CGFloat) -> some View {
+        HStack {
+            Button {
+                
+            } label: {
+                Image(systemName: "chevron.left.circle.fill")
+                    .font(.system(size: 30))
+                    .foregroundStyle(.primary, .background)
+                    .shadow(radius: 2)
+                    .frame(height: 35)
+            }
+            
+            Spacer()
+
+            Button {
+                
+            } label: {
+                Image(systemName: "ellipsis.circle.fill")
+                    .font(.system(size: 30))
+                    .foregroundStyle(.primary, .background)
+                    .shadow(radius: 2)
+                    .frame(height: 35)
+            }
+        }
+        .padding(.horizontal)
+        .padding(.top, 10)
     }
 }
 
