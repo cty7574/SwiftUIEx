@@ -15,12 +15,18 @@ struct CustomList<NavBar: View, TopContent: View, Header: View, Content: View>: 
     
     @State private var headerProgress: CGFloat = 0
     @State private var safeAreaTop: CGFloat = 0
+    @State private var topContentHeight: CGFloat = 0
     
     @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         List {
             topContent(headerProgress, safeAreaTop)
+                .onGeometryChange(for: CGFloat.self, of: { proxy in
+                    proxy.size.height
+                }, action: { newValue in
+                    topContentHeight = newValue
+                })
                 .customListRow()
             
             Section {
@@ -28,6 +34,15 @@ struct CustomList<NavBar: View, TopContent: View, Header: View, Content: View>: 
             } header: {
                 header(headerProgress)
                     .foregroundStyle(foregroundColor)
+                    .onGeometryChange(for: CGFloat.self, of: { proxy in
+                        topContentHeight == .zero ? 0 : proxy.frame(in: .named("LISTVIEW")).minY
+                    }, action: { newValue in
+                        guard topContentHeight != .zero else { return }
+                        let progress: CGFloat = (newValue - safeAreaTop) / topContentHeight
+                        let cappedProgress: CGFloat = 1 - max(min(progress, 1), 0)
+                        self.headerProgress = cappedProgress
+                        print(cappedProgress)
+                    })
                     .customListRow()
             }
         }
