@@ -18,7 +18,19 @@ struct ContentView: View {
         } header: { progress in
             headerView(progress)
         } content: {
-            
+            ForEach(viewModel.menuCards) { card in
+                Section {
+                    ForEach(card.items) { _ in
+                        CardView()
+                            .customListRow(top: 5, bottom: 5)
+                    }
+                } header: {
+                    Text(card.title)
+                        .font(.title2.bold())
+                        .padding([.leading, .top], 15)
+                        .customListRow()
+                }
+            }
         }
     }
     
