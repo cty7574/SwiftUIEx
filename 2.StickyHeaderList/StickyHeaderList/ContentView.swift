@@ -62,6 +62,16 @@ struct ContentView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background {
+            // 스크롤 진행도가 0.8 이상일 때, background progress 값을 0-1 범위로 보정
+            let backgroundProgress: CGFloat = max(progress - 0.8, 0) * 5
+            
+            Rectangle()
+                .fill(.background)
+                .padding(.top, backgroundProgress * -100)
+                .shadow(color: .gray.opacity(backgroundProgress * 0.3), radius: 5, x: 0, y: 2)
+        }
     }
 }
 

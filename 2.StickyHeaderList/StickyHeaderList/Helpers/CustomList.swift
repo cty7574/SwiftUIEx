@@ -41,7 +41,6 @@ struct CustomList<NavBar: View, TopContent: View, Header: View, Content: View>: 
                         let progress: CGFloat = (newValue - safeAreaTop) / topContentHeight
                         let cappedProgress: CGFloat = 1 - max(min(progress, 1), 0)
                         self.headerProgress = cappedProgress
-                        print(cappedProgress)
                     })
                     .customListRow()
             }
