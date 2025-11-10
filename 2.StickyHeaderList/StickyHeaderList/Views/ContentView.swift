@@ -12,30 +12,52 @@ struct ContentView: View {
     @State private var currentTitle: String?
     
     var body: some View {
-        CustomList { progress in
-            navBarView(progress)
-        } topContent: { progress, safeAreaTop in
-            heroImage(progress, safeAreaTop)
-        } header: { progress in
-            headerView(progress)
-        } content: {
-            ForEach(viewModel.menuCards) { card in
-                Section {
-                    ForEach(card.items) { _ in
-                        CardView()
-                            .customListRow(top: 5, bottom: 5)
-                    }
-                } header: {
-                    Text(card.title)
-                        .font(.title2.bold())
-                        .padding([.leading, .top], 15)
-                        .onGeometryChange(for: CGFloat.self) { proxy in
-                            proxy.frame(in: .global).minY
-                        } action: { newValue in
-                            updateCurrentTitle(card: card, offset: newValue)
+        ScrollViewReader { reader in
+            CustomList { progress in
+                navBarView(progress)
+            } topContent: { progress, safeAreaTop in
+                heroImage(progress, safeAreaTop)
+            } header: { progress in
+                headerView(progress)
+            } content: {
+                ForEach(viewModel.menuCards) { card in
+                    Section {
+                        ForEach(card.items) { _ in
+                            CardView()
+                                .customListRow(top: 5, bottom: 5)
                         }
-                        .customListRow()
-
+                    } header: {
+                        Text(card.title)
+                            .font(.title2.bold())
+                            .padding([.leading, .top], 15)
+                            .onGeometryChange(for: CGFloat.self) { proxy in
+                                proxy.frame(in: .global).minY
+                            } action: { newValue in
+                                updateCurrentTitle(card: card, offset: newValue)
+                            }
+                            .id(card.id)
+                            .customListRow()
+                        
+                    }
+                }
+            }
+            .onScrollPhaseChange { oldPhase, newPhase, context in
+                let offset = context.geometry.contentOffset.y + context.geometry.contentInsets.top
+                
+                if newPhase == .idle && offset > 0 {
+                    guard let firstCardID = viewModel.menuCards.first?.id else { return }
+                    
+                    if offset < 250 {
+                        if offset < 125 {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                reader.scrollTo(firstCardID, anchor: .bottom)
+                            }
+                        } else {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                reader.scrollTo(firstCardID, anchor: .top)
+                            }
+                        }
+                    }
                 }
             }
         }
