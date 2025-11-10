@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel: ViewModel = .init()
+    @State private var currentTitle: String?
     
     var body: some View {
         CustomList { progress in
@@ -28,9 +29,20 @@ struct ContentView: View {
                     Text(card.title)
                         .font(.title2.bold())
                         .padding([.leading, .top], 15)
+                        .onGeometryChange(for: CGFloat.self) { proxy in
+                            proxy.frame(in: .global).minY
+                        } action: { newValue in
+                            updateCurrentTitle(card: card, offset: newValue)
+                        }
                         .customListRow()
+
                 }
             }
+        }
+        .task {
+            guard currentTitle == nil else { return }
+            currentTitle = viewModel.menuCards.first?.title
+            
         }
     }
     
@@ -79,11 +91,12 @@ struct ContentView: View {
             }
             .opacity(opacity)
             .overlay(alignment: .leading) {
-                Text("Order Again")
+                Text(currentTitle ?? "")
                     .font(.system(size: 14))
                     .foregroundStyle(.gray)
                     .fontWeight(.medium)
                     .contentTransition(.numericText())
+                    .animation(.snappy, value: currentTitle)
                     .offset(x: 45, y: -5)
                     .opacity(currentMenuTitleOpacity)
             }
@@ -129,6 +142,21 @@ struct ContentView: View {
         }
         .padding(.horizontal)
         .padding(.top, 10)
+    }
+    
+    func updateCurrentTitle(card: MenuCard, offset: CGFloat) {
+        if offset < 200 {
+            if card.title != currentTitle {
+                currentTitle = card.title
+            }
+        } else {
+            if currentTitle == card.title && card.id != viewModel.menuCards.first?.id {
+                if let currentIndex = viewModel.menuCards.firstIndex(where: { $0.id == card.id }) {
+                    let previousIndex = max(viewModel.menuCards.index(before: currentIndex), 0)
+                    currentTitle = viewModel.menuCards[previousIndex].title
+                }
+            }
+        }
     }
 }
 
