@@ -12,7 +12,7 @@ final class OnBoardingCoordinator {
     var items: [OnBoardingItem] = []
     var overlayWindow: UIWindow?
     
-    var orderedItem: [OnBoardingItem] {
+    var orderedItems: [OnBoardingItem] {
         return items.sorted { $0.id < $1.id }
     }
 }

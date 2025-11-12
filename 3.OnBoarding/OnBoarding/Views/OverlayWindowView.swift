@@ -11,6 +11,11 @@ struct OverlayWindowView: View {
     var snapshot: UIImage
     @Environment(OnBoardingCoordinator.self) var coordinator
     @State private var animate: Bool = false
+    @State private var currentIndex: Int = 0
+    
+    private var orderedItems: [OnBoardingItem] {
+        return coordinator.orderedItems
+    }
     
     var body: some View {
         GeometryReader { proxy in
@@ -25,12 +30,28 @@ struct OverlayWindowView: View {
                 Image(uiImage: snapshot)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .overlay {
+                        Rectangle()
+                            .fill(.black.opacity(0.5))
+                            .reverseMask(alignment: .topLeading) {
+                                if !orderedItems.isEmpty {
+                                    let maskLocation = orderedItems[currentIndex].maskLocation
+                                    
+                                    RoundedRectangle(cornerRadius: 35, style: .continuous)
+                                        .frame(width: maskLocation.width, height: maskLocation.height)
+                                        .offset(x: maskLocation.minX, y: maskLocation.minY)
+                                }
+                            }
+                    }
                     .clipShape(.rect(cornerRadius: animate ? cornerRadius : 0, style: .circular))
                     .overlay {
                         iPhoneShape(safeArea)
                     }
                     .scaleEffect(animate ? 0.65 : 1, anchor: .top)
                     .offset(y: animate ? safeArea.top + 25 : 0)
+                    .overlay(alignment: .bottom) {
+                        bottomView(safeArea)
+                    }
             }
             .ignoresSafeArea()
         }
@@ -62,6 +83,72 @@ struct OverlayWindowView: View {
             }
         }
     }
+    
+    @ViewBuilder
+    private func bottomView(_ safeArea: EdgeInsets) -> some View {
+        VStack(spacing: 10) {
+            ZStack {
+                ForEach(orderedItems) { info in
+                    if currentIndex == orderedItems.firstIndex(where: { $0.id == info.id }) {
+                        info.view
+                            .transition(.blurReplace)
+                            .environment(\.colorScheme, .dark)
+                    }
+                }
+            }
+            .frame(height: 70)
+            .frame(maxWidth: 280)
+            
+            HStack(spacing: 6) {
+                if currentIndex > 0 {
+                    Button {
+                        withAnimation(.smooth(duration: 0.35, extraBounce: 0)) {
+                            currentIndex = max(currentIndex - 1, 0)
+                        }
+                    } label: {
+                        Image(systemName: "chevron.left.circle.fill")
+                            .font(.system(size: 38))
+                            .foregroundStyle(.white, .gray.opacity(0.4))
+                    }
+
+                }
+                
+                Button {
+                    if currentIndex == orderedItems.count - 1 {
+                        
+                    } else {
+                        withAnimation(.smooth(duration: 0.35, extraBounce: 0)) {
+                            currentIndex += 1
+                        }
+                    }
+                } label: {
+                    Text(currentIndex == orderedItems.count - 1 ? "Finish" : "Next")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .contentTransition(.numericText())
+                        .foregroundStyle(.white)
+                        .padding(.vertical, 10)
+                        .background(.blue.gradient, in: .capsule)
+                }
+            }
+            .frame(maxWidth: 250)
+            .frame(height: 50)
+            .padding(.leading, currentIndex > 0 ? -45 : 0)
+            
+            Button {
+                
+            } label: {
+                Text("Skip Tutorial")
+                    .font(.callout)
+                    .underline()
+            }
+            .foregroundStyle(.gray)
+
+        }
+        .padding(.horizontal)
+        .padding(.bottom, safeArea.bottom + 10)
+    }
+    
 }
 
 #Preview {

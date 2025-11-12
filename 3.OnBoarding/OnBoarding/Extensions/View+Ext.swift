@@ -27,4 +27,16 @@ extension View {
         
         return nil 
     }
+    
+    @ViewBuilder
+    func reverseMask<Content: View>(alignment: Alignment = .center, @ViewBuilder content: @escaping () -> Content) -> some View {
+        self
+            .mask {
+                Rectangle()
+                    .overlay(alignment: alignment) {
+                        content()
+                            .blendMode(.destinationOut)
+                    }
+            }
+    }
 }
