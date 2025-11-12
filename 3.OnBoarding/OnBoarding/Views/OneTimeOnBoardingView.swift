@@ -39,8 +39,8 @@ struct OneTimeOnBoardingView<Content: View>: View {
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            !isOnBoarded, coordinator.overlayWindow == nil {
             let window: UIWindow = UIWindow(windowScene: scene)
-            window.backgroundColor = .red
-            window.isHidden = false
+            window.backgroundColor = .clear
+            window.makeKeyAndVisible()
             window.isUserInteractionEnabled = true
             
             coordinator.overlayWindow = window

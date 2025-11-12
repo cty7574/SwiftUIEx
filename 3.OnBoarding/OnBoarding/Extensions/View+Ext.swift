@@ -11,7 +11,7 @@ extension View {
     @ViewBuilder
     func onBoarding<Content: View>(_ position: Int, @ViewBuilder content: @escaping () -> Content) -> some View {
         self
-            
+            .modifier(OnBoardingItemSetter(position: position, onBoardingContent: content))
     }
     
     func snapshotScreen() -> UIImage? {
