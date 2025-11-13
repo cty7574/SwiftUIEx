@@ -11,6 +11,7 @@ import SwiftUI
 final class OnBoardingCoordinator {
     var items: [OnBoardingItem] = []
     var overlayWindow: UIWindow?
+    var isOnBoardingFinished: Bool = false 
     
     var orderedItems: [OnBoardingItem] {
         return items.sorted { $0.id < $1.id }

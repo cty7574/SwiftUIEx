@@ -33,6 +33,12 @@ struct OneTimeOnBoardingView<Content: View>: View {
                 await beginOnBoarding()
                 await createWindow()
             }
+            .onChange(of: coordinator.isOnBoardingFinished) { oldValue, newValue in
+                if newValue {
+                    isOnBoarded = true
+                    onBoardingFinished()
+                }
+            }
     }
     
     private func createWindow() async {
@@ -63,6 +69,7 @@ struct OneTimeOnBoardingView<Content: View>: View {
     }
     
     private func hideWindow() {
+        coordinator.overlayWindow?.rootViewController = nil 
         coordinator.overlayWindow?.isHidden = true
         coordinator.overlayWindow?.isUserInteractionEnabled = false
     }

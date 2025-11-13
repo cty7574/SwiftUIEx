@@ -42,6 +42,7 @@ struct OverlayWindowView: View {
                                         .offset(x: maskLocation.minX, y: maskLocation.minY)
                                 }
                             }
+                            .opacity(animate ? 1 : 0)
                     }
                     .clipShape(.rect(cornerRadius: animate ? cornerRadius : 0, style: .circular))
                     .overlay {
@@ -49,7 +50,7 @@ struct OverlayWindowView: View {
                     }
                     .scaleEffect(animate ? 0.65 : 1, anchor: .top)
                     .offset(y: animate ? safeArea.top + 25 : 0)
-                    .overlay(alignment: .bottom) {
+                    .background(alignment: .bottom) {
                         bottomView(safeArea)
                     }
             }
@@ -115,7 +116,7 @@ struct OverlayWindowView: View {
                 
                 Button {
                     if currentIndex == orderedItems.count - 1 {
-                        
+                        closeWindow()
                     } else {
                         withAnimation(.smooth(duration: 0.35, extraBounce: 0)) {
                             currentIndex += 1
@@ -135,9 +136,7 @@ struct OverlayWindowView: View {
             .frame(height: 50)
             .padding(.leading, currentIndex > 0 ? -45 : 0)
             
-            Button {
-                
-            } label: {
+            Button(action: closeWindow) {
                 Text("Skip Tutorial")
                     .font(.callout)
                     .underline()
@@ -149,6 +148,13 @@ struct OverlayWindowView: View {
         .padding(.bottom, safeArea.bottom + 10)
     }
     
+    private func closeWindow() {
+        withAnimation(.easeInOut(duration: 0.35), completionCriteria: .removed) {
+            animate = false
+        } completion: {
+            coordinator.isOnBoardingFinished = true
+        }
+    }
 }
 
 #Preview {
