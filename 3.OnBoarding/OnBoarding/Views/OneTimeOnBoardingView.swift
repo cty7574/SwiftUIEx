@@ -35,8 +35,9 @@ struct OneTimeOnBoardingView<Content: View>: View {
             }
             .onChange(of: coordinator.isOnBoardingFinished) { oldValue, newValue in
                 if newValue {
-                    isOnBoarded = true
+                    //isOnBoarded = true
                     onBoardingFinished()
+                    hideWindow()
                 }
             }
     }
@@ -44,12 +45,19 @@ struct OneTimeOnBoardingView<Content: View>: View {
     private func createWindow() async {
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            !isOnBoarded, coordinator.overlayWindow == nil {
-            let window: UIWindow = UIWindow(windowScene: scene)
-            window.backgroundColor = .clear
-            window.makeKeyAndVisible()
-            window.isUserInteractionEnabled = true
-            
-            coordinator.overlayWindow = window
+            if let window = scene.windows.first(where: { $0.tag == 1009 }) {
+                window.rootViewController = nil
+                window.isHidden = false
+                window.isUserInteractionEnabled = true 
+                coordinator.overlayWindow = window
+            } else {
+                let window: UIWindow = UIWindow(windowScene: scene)
+                window.backgroundColor = .clear
+                window.makeKeyAndVisible()
+                window.isUserInteractionEnabled = true
+                
+                coordinator.overlayWindow = window
+            }
             
             try? await Task.sleep(for: .seconds(0.1))
             
@@ -69,7 +77,7 @@ struct OneTimeOnBoardingView<Content: View>: View {
     }
     
     private func hideWindow() {
-        coordinator.overlayWindow?.rootViewController = nil 
+        coordinator.overlayWindow?.rootViewController = nil
         coordinator.overlayWindow?.isHidden = true
         coordinator.overlayWindow?.isUserInteractionEnabled = false
     }
