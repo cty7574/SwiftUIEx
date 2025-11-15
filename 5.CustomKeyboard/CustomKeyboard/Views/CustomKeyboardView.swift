@@ -16,6 +16,10 @@ struct CustomKeyboardView: View {
             ForEach(1...9, id: \.self) { index in
                 buttonView("\(index)")
             }
+            
+            buttonView("delete.backward.fill", isImage: true)
+            buttonView("0")
+            buttonView("checkmark.circle.fill", isImage: true)
         }
         .padding()
         .background(.background.shadow(.drop(color: .black.opacity(0.08), radius: 5, x: 0, y: -5)))
@@ -24,14 +28,35 @@ struct CustomKeyboardView: View {
     @ViewBuilder
     func buttonView(_ value: String, isImage: Bool = false) -> some View {
         Button {
-            text += value
+            if isImage {
+                if value == "delete.backward.fill" && !text.isEmpty {
+                    text.removeLast()
+                }
+                
+                if value == "checkmark.circle.fill" {
+                    isActive = false
+                }
+            } else {
+                text += value
+            }
         } label: {
-            Text(value)
-                .font(.title3)
-                .fontWeight(.semibold)
-                .frame(width: 50, height: 50)
-                .background(.background.shadow(.drop(color: .black.opacity(0.08), radius: 3, x: 0, y: 0)), in: .rect(cornerRadius: 10))
-                .foregroundStyle(.primary)
+            Group {
+                if isImage {
+                    Image(systemName: value)
+                } else {
+                    Text(value)
+                }
+            }
+            .font(.title3)
+            .fontWeight(.semibold)
+            .frame(width: 50, height: 50)
+            .background(content: {
+                if !isImage {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.background.shadow(.drop(color: .black.opacity(0.08), radius: 3, x: 0, y: 0)))
+                }
+            })
+            .foregroundStyle(.black)
         }
 
     }

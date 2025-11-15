@@ -18,7 +18,8 @@ struct ContentView: View {
                     .padding(.vertical, 10)
                     .padding(.horizontal, 15)
                     .frame(width: 150)
-                    .background(.fill, in: .rect(cornerRadius: 15))
+                    .background(.fill, in: .rect(cornerRadius: 12))
+                    .focused($isActive)
             } keyboard: {
                 CustomKeyboardView(text: $text, isActive: $isActive)
             }
