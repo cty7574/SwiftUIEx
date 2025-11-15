@@ -15,6 +15,18 @@ struct CustomTextFieldWithKeyboard<TextField: View, Keyboard: View>: UIViewContr
         let controller: UIHostingController = .init(rootView: textField)
         controller.view.backgroundColor = .clear
         
+        DispatchQueue.main.async {
+            if let textField: UITextField =
+                controller.view.allSubviews.first(where: { $0 is UITextField }) as? UITextField,
+               textField.inputView == nil {
+                let inputController: UIHostingController = .init(rootView: keyboard)
+                inputController.view.backgroundColor = .clear
+                inputController.view.frame = .init(origin: .zero, size: inputController.view.intrinsicContentSize)
+                textField.inputView = inputController.view
+                textField.reloadInputViews()
+            }
+        }
+        
         return controller
     }
         
