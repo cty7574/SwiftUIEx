@@ -8,14 +8,22 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var text: String = ""
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            CustomTextFieldWithKeyboard {
+                TextField("App Pin Code", text: $text)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 15)
+                    .frame(width: 150)
+                    .background(.fill, in: .rect(cornerRadius: 15))
+            } keyboard: {
+                
+            }
+            .navigationTitle("Custom Keyboard")
+
         }
-        .padding()
     }
 }
 
