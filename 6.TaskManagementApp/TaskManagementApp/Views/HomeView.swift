@@ -14,14 +14,22 @@ struct HomeView: View {
     @State private var createWeek: Bool = false
     @Namespace private var animation
     
+    private var viewModel: ViewModel = .init()
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             headerView()
             
-            
+            ScrollView(.vertical) {
+                VStack {
+                    tasksView()
+                }
+                .hSpacing(.center)
+                .vSpacing(.center)
+            }
         }
         .vSpacing(.top)
-        .background(.gray)
+        .background(.black.opacity(0.05))
         .onAppear {
             if weekSlider.isEmpty {
                 let currentWeek = Date().fetchWeek()
@@ -146,6 +154,17 @@ struct HomeView: View {
                     }
             }
         }
+    }
+    
+    @ViewBuilder
+    func tasksView() -> some View {
+        VStack(alignment: .leading, spacing: 36) {
+            ForEach(viewModel.tasks) { task in
+                TaskRowView(task: task)
+            }
+        }
+        .padding([.vertical, .leading])
+        .padding(.top)
     }
     
     private func paginateWeek() {
