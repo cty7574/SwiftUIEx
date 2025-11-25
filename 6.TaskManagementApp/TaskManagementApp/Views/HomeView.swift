@@ -11,18 +11,30 @@ struct HomeView: View {
     @State private var currentDate: Date = .init()
     @State private var weekSlider: [[Date.WeekDay]] = []
     @State private var currentWeekIndex: Int = 0
+    @State private var createWeek: Bool = false
     @Namespace private var animation
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             headerView()
+            
+            
         }
         .vSpacing(.top)
         .background(.gray)
         .onAppear {
             if weekSlider.isEmpty {
                 let currentWeek = Date().fetchWeek()
+                
+                if let firstDate = currentWeek.first?.date {
+                    weekSlider.append(firstDate.createPreviousWeek())
+                }
+                
                 weekSlider.append(currentWeek)
+                
+                if let lastDate = currentWeek.last?.date {
+                    weekSlider.append(lastDate.createNextWeek())
+                }
             }
         }
     }
@@ -49,9 +61,11 @@ struct HomeView: View {
                 ForEach(weekSlider.indices, id: \.self) { index in
                     let week = weekSlider[index]
                     weekView(week)
+                        .padding(.horizontal)
                         .tag(index)
                 }
             }
+            .padding(.horizontal, -16)
             .tabViewStyle(.page(indexDisplayMode: .never))
             .frame(height: 90)
         }
@@ -68,6 +82,11 @@ struct HomeView: View {
         }
         .padding()
         .background(.white)
+        .onChange(of: currentWeekIndex, initial: false) { oldValue, newValue in
+            if newValue == 0 || newValue == (weekSlider.count - 1) {
+                createWeek = true 
+            }
+        }
     }
     
     @ViewBuilder
@@ -111,6 +130,38 @@ struct HomeView: View {
                         currentDate = day.date
                     }
                 }
+            }
+        }
+        .background {
+            GeometryReader { proxy in
+                let minX = proxy.frame(in: .global).minX
+                
+                Color.clear
+                    .preference(key: OffsetKey.self, value: minX)
+                    .onPreferenceChange(OffsetKey.self) { value in
+                        if value.rounded() == 15 && createWeek {
+                            paginateWeek()
+                            createWeek = false
+                        }
+                    }
+            }
+        }
+    }
+    
+    private func paginateWeek() {
+        if weekSlider.indices.contains(currentWeekIndex) {
+            if let firstDate = weekSlider[currentWeekIndex].first?.date,
+                currentWeekIndex == 0 {
+                weekSlider.insert(firstDate.createPreviousWeek(), at: 0)
+                weekSlider.removeLast()
+                currentWeekIndex = 1
+            }
+            
+            if let lastDate = weekSlider[currentWeekIndex].last?.date,
+                currentWeekIndex == (weekSlider.count - 1) {
+                weekSlider.append(lastDate.createNextWeek())
+                weekSlider.removeFirst()
+                currentWeekIndex = weekSlider.count - 2
             }
         }
     }
