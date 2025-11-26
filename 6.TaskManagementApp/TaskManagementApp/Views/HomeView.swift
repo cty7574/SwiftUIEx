@@ -14,7 +14,7 @@ struct HomeView: View {
     @State private var createWeek: Bool = false
     @Namespace private var animation
     
-    private var viewModel: ViewModel = .init()
+    @State private var viewModel: ViewModel = .init()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -159,8 +159,17 @@ struct HomeView: View {
     @ViewBuilder
     func tasksView() -> some View {
         VStack(alignment: .leading, spacing: 36) {
-            ForEach(viewModel.tasks) { task in
+            ForEach($viewModel.tasks) { task in
                 TaskRowView(task: task)
+                    .background(alignment: .leading) {
+                        if viewModel.tasks.last?.id != task.id {
+                            Rectangle()
+                                .frame(width: 1)
+                                .offset(x: 8)
+                                .padding(.bottom, -36)
+                            
+                        }
+                    }
             }
         }
         .padding([.vertical, .leading])
