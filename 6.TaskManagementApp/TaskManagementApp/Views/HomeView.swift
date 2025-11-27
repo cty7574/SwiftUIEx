@@ -104,7 +104,10 @@ struct HomeView: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 45, height: 45)
                     .clipShape(.circle)
-                    .background(.gray)
+                    .background {
+                        Circle()
+                            .fill(.gray)
+                    }
             }
         }
         .padding()

@@ -95,7 +95,6 @@ struct NewTaskView: View {
             .disabled(title == "")
             .opacity(title == "" ? 0.5 : 1)
         }
-        .hSpacing(.center)
         .padding()
     }
 }
