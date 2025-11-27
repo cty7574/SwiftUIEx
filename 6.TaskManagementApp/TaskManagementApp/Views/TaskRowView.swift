@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TaskRowView: View {
-    @Binding var task: Task
+    @Bindable var task: Task
     
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
@@ -39,7 +39,7 @@ struct TaskRowView: View {
             }
             .padding()
             .hSpacing(.leading)
-            .background(task.tint, in: .rect(topLeadingRadius: 16, bottomLeadingRadius: 16))
+            .background(task.tintColor, in: .rect(topLeadingRadius: 16, bottomLeadingRadius: 16))
             .strikethrough(task.isCompleted, pattern: .solid, color: .black)
             .offset(y: -8)
         }

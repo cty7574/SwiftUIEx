@@ -22,7 +22,7 @@ struct HomeView: View {
             headerView()
             
             ScrollView(.vertical) {
-                tasksView()
+                TasksView(currentDate: $currentDate)
                     .hSpacing(.center)
                     .vSpacing(.center)
             }
@@ -176,26 +176,6 @@ struct HomeView: View {
                     }
             }
         }
-    }
-    
-    @ViewBuilder
-    func tasksView() -> some View {
-        VStack(alignment: .leading, spacing: 36) {
-            ForEach($viewModel.tasks) { task in
-                TaskRowView(task: task)
-                    .background(alignment: .leading) {
-                        if viewModel.tasks.last?.id != task.id {
-                            Rectangle()
-                                .frame(width: 1)
-                                .offset(x: 8)
-                                .padding(.bottom, -36)
-                            
-                        }
-                    }
-            }
-        }
-        .padding([.vertical, .leading])
-        .padding(.top)
     }
     
     private func paginateWeek() {
