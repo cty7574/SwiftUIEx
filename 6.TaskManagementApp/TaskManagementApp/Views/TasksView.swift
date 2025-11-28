@@ -22,7 +22,7 @@ struct TasksView: View {
             return $0.creationDate >= startOfDate && $0.creationDate < endOfDate
         }
         
-        let sortDescriptor = [SortDescriptor(\Task.creationDate, order: .reverse)]
+        let sortDescriptor = [SortDescriptor(\Task.creationDate, order: .forward)]
         self._tasks = Query(filter: predicate, sort: sortDescriptor, animation: .snappy)
     }
     
@@ -42,6 +42,14 @@ struct TasksView: View {
         }
         .padding([.vertical, .leading], 16)
         .padding(.top, 16)
+        .overlay {
+            if tasks.isEmpty {
+                Text("No Task's Found")
+                    .font(.caption)
+                    .foregroundStyle(.gray)
+                    .frame(width: 150)
+            }
+        }
     }
 }
 

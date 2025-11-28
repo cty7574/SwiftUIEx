@@ -5,13 +5,15 @@
 //  Created by 멘태 on 11/26/25.
 //
 
+import SwiftData
 import SwiftUI
 
 struct NewTaskView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
     @State private var title: String = ""
     @State private var date: Date = .init()
-    @State private var color: Color = .blue
+    @State private var color: Color = .white
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -53,10 +55,10 @@ struct NewTaskView: View {
                         .font(.caption)
                         .foregroundStyle(.gray)
                     
-                    let colors: [Color] = [.yellow, .cyan, .white, .pink, .gray]
-                    
                     HStack(spacing: 0) {
-                        ForEach(colors, id: \.self) { color in
+                        ForEach(Color.taskColorNames, id: \.self) { name in
+                            let color: Color = .getTaskColor(for: name)
+                            
                             Circle()
                                 .fill(color)
                                 .frame(width: 20, height: 20)
@@ -81,7 +83,15 @@ struct NewTaskView: View {
             Spacer(minLength: 0)
             
             Button {
+                let task: Task = Task(title: title, creationDate: date, tint: color.getTaskName())
                 
+                do {
+                    context.insert(task)
+                    try context.save()
+                    dismiss()
+                } catch {
+                    print(error.localizedDescription)
+                }
             } label: {
                 Text("Create Task")
                     .font(.title3)
