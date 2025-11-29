@@ -15,8 +15,6 @@ struct HomeView: View {
     @State private var createNewTask: Bool = false
     @Namespace private var animation
     
-    @State private var viewModel: ViewModel = .init()
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             headerView()
