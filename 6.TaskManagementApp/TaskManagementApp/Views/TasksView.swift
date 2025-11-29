@@ -10,7 +10,7 @@ import SwiftUI
 
 struct TasksView: View {
     @Binding var currentDate: Date
-    @Query private var tasks: [Task]
+    @Query private var tasks: [Task] = []
     
     init(currentDate: Binding<Date>) {
         self._currentDate = currentDate
