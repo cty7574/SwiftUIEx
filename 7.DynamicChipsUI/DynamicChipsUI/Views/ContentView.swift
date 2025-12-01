@@ -18,7 +18,7 @@ struct ContentView: View {
                         Text(chip.name)
                             .font(.body)
                             .foregroundStyle(.white)
-                            .padding(.vertical, 8)
+                            .padding(.vertical, 6)
                             .padding(.horizontal, 10)
                             .background(.red.gradient, in: .capsule)
                     }

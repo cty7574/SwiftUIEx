@@ -11,7 +11,19 @@ struct ChipsView<Content: View>: View {
     @ViewBuilder var content: Content
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Group(subviews: content) { collection in
+            let chunkedCollection = collection.chunked(3)
+            
+            VStack(alignment: .center, spacing: 10) {
+                ForEach(chunkedCollection.indices, id: \.self) { index in
+                    HStack(spacing: 10) {
+                        ForEach(chunkedCollection[index]) { subview in
+                            subview 
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
