@@ -12,13 +12,13 @@ struct ChipsView<Content: View>: View {
     
     var body: some View {
         Group(subviews: content) { collection in
-            let chunkedCollection = collection.chunked(3)
+            let chunkedCollection = collection.chunkByWidth(268)
             
             VStack(alignment: .center, spacing: 10) {
                 ForEach(chunkedCollection.indices, id: \.self) { index in
                     HStack(spacing: 10) {
                         ForEach(chunkedCollection[index]) { subview in
-                            subview 
+                            subview
                         }
                     }
                 }
