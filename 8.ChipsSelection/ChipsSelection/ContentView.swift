@@ -18,6 +18,8 @@ struct ContentView: View {
                 } didChangeSelection: { selection in
                     print(selection)
                 }
+                .padding(10)
+                .background(.gray.opacity(0.1), in: .rect(cornerRadius: 20))
             }
             .padding()
             .navigationTitle("Chips Selection")
