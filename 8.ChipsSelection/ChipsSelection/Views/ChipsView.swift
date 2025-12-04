@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ChipsView<Content: View, Tag: Equatable>: View where Tag: Hashable {
     var spacing: CGFloat = 10
+    var animation: Animation = .easeInOut(duration: 0.2)
     var tags: [Tag]
     @ViewBuilder var content: (Tag, Bool) -> Content
     var didChangeSelection: ([Tag]) -> ()
@@ -18,6 +19,18 @@ struct ChipsView<Content: View, Tag: Equatable>: View where Tag: Hashable {
         CustomChipLayout(spacing: spacing) {
             ForEach(tags, id: \.self) { tag in
                 content(tag, selectedTags.contains(tag))
+                    .contentShape(.rect)
+                    .onTapGesture {
+                        withAnimation(animation) {
+                            if selectedTags.contains(tag) {
+                                selectedTags.removeAll(where: { $0 == tag })
+                            } else {
+                                selectedTags.append(tag)
+                            }
+                            
+                            didChangeSelection(selectedTags)
+                        }
+                    }
             }
         }
     }
