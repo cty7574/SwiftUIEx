@@ -19,7 +19,7 @@ struct ContentView: View {
             .navigationTitle("Map Carousel")
         }
         .fullScreenCover(isPresented: $showView) {
-            CustomMapView()
+            //CustomMapView()
         }
     }
 }

@@ -10,7 +10,7 @@ import MapKit
 
 struct Place: Identifiable {
     var id: UUID = UUID()
-    var name: String
+    var name: String    
     var coordinates: CLLocationCoordinate2D
     var mapItem: MKMapItem
 }
