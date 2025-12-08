@@ -13,4 +13,16 @@ struct Place: Identifiable {
     var name: String    
     var coordinates: CLLocationCoordinate2D
     var mapItem: MKMapItem
+    
+    var address: String {
+        if #available(iOS 26, *) {
+            return mapItem.address?.fullAddress ?? ""
+        } else {
+            return mapItem.placemark.title ?? ""
+        }
+    }
+    
+    var phoneNumber: String? {
+        return  mapItem.phoneNumber
+    }
 }

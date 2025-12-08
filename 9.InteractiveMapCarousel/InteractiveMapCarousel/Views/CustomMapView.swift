@@ -90,8 +90,7 @@ struct CustomMapView: View {
         ScrollView(.horizontal) {
             HStack(spacing: 0) {
                 ForEach(places) { place in
-                    RoundedRectangle(cornerRadius: 30)
-                        .fill(.white)
+                    bottomCarousel(place)
                         .padding(.horizontal)
                         .frame(width: width)
                 }
@@ -101,6 +100,45 @@ struct CustomMapView: View {
         .scrollIndicators(.hidden)
         .scrollClipDisabled()
         .scrollTargetBehavior(.paging)
+    }
+    
+    @ViewBuilder
+    private func bottomCarousel(_ place: Place?) -> some View {
+        VStack(alignment: .leading) {
+            if let place {
+                Text(place.name)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                Text(place.address)
+                    .lineLimit(2)
+                
+                if let phoneNumber = place.phoneNumber, let url = URL(string: "tel:\(phoneNumber)") {
+                    Link("Phone Number: **\(phoneNumber)**", destination: url)
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                }
+                
+                Spacer()
+                
+                Button {
+                    
+                } label: {
+                    Text("Learn More")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 4)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.blue)
+                .buttonBorderShape(.capsule)
+
+            } else {
+                
+            }
+        }
+        .padding()
+        .optionalGlassEffect(colorScheme)
     }
     
     private func fetchPlaces() {
