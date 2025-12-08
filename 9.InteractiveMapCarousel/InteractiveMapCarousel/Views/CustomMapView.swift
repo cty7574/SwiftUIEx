@@ -43,9 +43,8 @@ struct CustomMapView: View {
                         bottomCarousel(size.width)
                         
                         if places.isEmpty {
-                            RoundedRectangle(cornerRadius: 30)
-                                .foregroundStyle(.white)
-                                .padding(.horizontal)
+                            bottomCarouselCardView(nil)
+                                .padding()
                                 .frame(width: size.width, height: size.height)
                         }
                     }
@@ -90,7 +89,7 @@ struct CustomMapView: View {
         ScrollView(.horizontal) {
             HStack(spacing: 0) {
                 ForEach(places) { place in
-                    bottomCarousel(place)
+                    bottomCarouselCardView(place)
                         .padding(.horizontal)
                         .frame(width: width)
                 }
@@ -103,7 +102,7 @@ struct CustomMapView: View {
     }
     
     @ViewBuilder
-    private func bottomCarousel(_ place: Place?) -> some View {
+    private func bottomCarouselCardView(_ place: Place?) -> some View {
         VStack(alignment: .leading) {
             if let place {
                 Text(place.name)
