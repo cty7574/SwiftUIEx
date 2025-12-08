@@ -134,7 +134,34 @@ struct CustomMapView: View {
                 .buttonBorderShape(.capsule)
 
             } else {
-                
+                Group {
+                    Text("PLACEHOLDER NAME")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    Text("Some random address here, for a placeholder reason, Thanks!")
+                        .lineLimit(2)
+                    
+                    Text("Some Phone Number Here")
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                    
+                    Spacer()
+                    
+                    Button {
+                        
+                    } label: {
+                        Text("Learn More")
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 4)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.blue)
+                    .buttonBorderShape(.capsule)
+                    .disabled(true)
+                }
+                .redacted(reason: .placeholder)
             }
         }
         .padding()
