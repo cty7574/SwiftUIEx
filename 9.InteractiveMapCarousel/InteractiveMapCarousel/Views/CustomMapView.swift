@@ -32,7 +32,13 @@ struct CustomMapView: View {
     
     var body: some View {
         NavigationStack {
-            Map(position: $cameraPosition)
+            Map(position: $cameraPosition) {
+                ForEach(places) { place in
+                    Annotation(place.name, coordinate: place.coordinates) {
+                        annotationView(place)
+                    }
+                }
+            }
                 .overlay {
                     loadingOverlay()
                 }
@@ -165,6 +171,19 @@ struct CustomMapView: View {
         }
         .padding()
         .optionalGlassEffect(colorScheme)
+    }
+    
+    @ViewBuilder
+    func annotationView(_ place: Place) -> some View {
+        Image(systemName: "apple.logo")
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: 20, height: 20)
+            .background {
+                Circle()
+                    .fill(.white)
+                    .padding(-5)
+            }
     }
     
     private func fetchPlaces() {
