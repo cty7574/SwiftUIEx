@@ -18,6 +18,7 @@ struct CustomMapView: View {
     
     @State private var cameraPosition: MapCameraPosition
     @State private var places: [Place] = []
+    @State private var selectedPlaceID: UUID?
     
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
@@ -105,6 +106,14 @@ struct CustomMapView: View {
         .scrollIndicators(.hidden)
         .scrollClipDisabled()
         .scrollTargetBehavior(.paging)
+        .scrollPosition(id: $selectedPlaceID, anchor: .center)
+        .onChange(of: selectedPlaceID) { oldValue, newValue in
+            guard let coordinates = places.first(where:  { $0.id == newValue })?.coordinates else { return }
+            
+            withAnimation(animation) {
+                cameraPosition = .camera(.init(centerCoordinate: coordinates, distance: 25000))
+            }
+        }
     }
     
     @ViewBuilder
@@ -175,15 +184,18 @@ struct CustomMapView: View {
     
     @ViewBuilder
     func annotationView(_ place: Place) -> some View {
+        let isSelected = place.id == selectedPlaceID
+        
         Image(systemName: "apple.logo")
             .resizable()
             .aspectRatio(contentMode: .fill)
-            .frame(width: 20, height: 20)
+            .frame(width: isSelected ? 50 : 20, height: isSelected ? 50 : 20)
             .background {
                 Circle()
                     .fill(.white)
-                    .padding(-5)
+                    .padding(-10)
             }
+            .animation(animation, value: isSelected)
     }
     
     private func fetchPlaces() {
@@ -210,6 +222,7 @@ struct CustomMapView: View {
                 
                 withAnimation(animation) {
                     self.places = places
+                    self.selectedPlaceID = places.first?.id
                 }
             }
         }
