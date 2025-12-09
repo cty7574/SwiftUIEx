@@ -196,6 +196,12 @@ struct CustomMapView: View {
                     .padding(-10)
             }
             .animation(animation, value: isSelected)
+            .contentShape(.rect)
+            .onTapGesture {
+                withAnimation(animation) {
+                    selectedPlaceID = place.id
+                }
+            }
     }
     
     private func fetchPlaces() {
