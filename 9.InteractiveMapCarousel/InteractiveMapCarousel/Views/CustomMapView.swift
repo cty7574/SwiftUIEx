@@ -195,6 +195,11 @@ struct CustomMapView: View {
                     .fill(.white)
                     .padding(-10)
             }
+            .background {
+                if isSelected {
+                    PulseRingView(tint: colorScheme == .dark ? .white : .gray, size: 80)
+                }
+            }
             .animation(animation, value: isSelected)
             .contentShape(.rect)
             .onTapGesture {
