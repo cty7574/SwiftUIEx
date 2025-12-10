@@ -19,6 +19,8 @@ struct CustomMapView: View {
     @State private var cameraPosition: MapCameraPosition
     @State private var places: [Place] = []
     @State private var selectedPlaceID: UUID?
+    @State private var expandedItem: Place?
+    @Namespace private var animationID
     
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
@@ -78,6 +80,10 @@ struct CustomMapView: View {
                     }
                 }
         }
+        .sheet(item: $expandedItem, content: { place in
+            DetailView(place: place)
+                .navigationTransition(.zoom(sourceID: place.id, in: animationID))
+        })
         .onAppear {
             guard places.isEmpty else { return }
             fetchPlaces()
@@ -99,6 +105,7 @@ struct CustomMapView: View {
                     bottomCarouselCardView(place)
                         .padding(.horizontal)
                         .frame(width: width)
+                        .matchedTransitionSource(id: place.id, in: animationID)
                 }
             }
             .scrollTargetLayout()
@@ -136,7 +143,7 @@ struct CustomMapView: View {
                 Spacer()
                 
                 Button {
-                    
+                    expandedItem = place
                 } label: {
                     Text("Learn More")
                         .fontWeight(.semibold)
@@ -173,8 +180,8 @@ struct CustomMapView: View {
                     .buttonStyle(.borderedProminent)
                     .tint(.blue)
                     .buttonBorderShape(.capsule)
-                    .disabled(true)
                 }
+                .disabled(true)
                 .redacted(reason: .placeholder)
             }
         }
