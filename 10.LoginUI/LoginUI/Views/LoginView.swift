@@ -10,6 +10,7 @@ import SwiftUI
 struct LoginView: View {
     @State private var emailID: String = ""
     @State private var password: String = ""
+    @Binding var showSignUp: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -53,7 +54,7 @@ struct LoginView: View {
                     .foregroundStyle(.gray)
                 
                 Button("SignUp") {
-                    
+                    showSignUp.toggle()
                 }
                 .fontWeight(.bold)
                 .tint(.yellow)
@@ -67,5 +68,5 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView()
+    ContentView()
 }
