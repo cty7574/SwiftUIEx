@@ -14,7 +14,7 @@ struct ContentView: View {
         NavigationStack {
             LoginView(showSignUp: $showSignUp)
                 .navigationDestination(isPresented: $showSignUp) {
-                    
+                    SignUpView(showSignUp: $showSignUp)
                 }
         }
         .overlay {

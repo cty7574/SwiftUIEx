@@ -1,30 +1,31 @@
 //
-//  LoginView.swift
+//  SignUpView.swift
 //  LoginUI
 //
-//  Created by 멘태 on 12/11/25.
+//  Created by 멘태 on 12/12/25.
 //
 
 import SwiftUI
 
-struct LoginView: View {
+struct SignUpView: View {
     @State private var emailID: String = ""
+    @State private var fullName: String = ""
     @State private var password: String = ""
     @Binding var showSignUp: Bool
     
     private var isFormValid: Bool {
-        return !emailID.isEmpty && !password.isEmpty
+        return !emailID.isEmpty && !fullName.isEmpty && !password.isEmpty
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Spacer()
             
-            Text("Login")
+            Text("SignUp")
                 .font(.largeTitle)
                 .fontWeight(.heavy)
             
-            Text("Please sign in to continue")
+            Text("Please sign up to continue")
                 .font(.callout)
                 .fontWeight(.semibold)
                 .foregroundStyle(.gray)
@@ -32,17 +33,18 @@ struct LoginView: View {
             
             VStack(spacing: 26) {
                 CustomTextField(sfIcon: "at", hint: "Email ID", value: $emailID)
+                CustomTextField(sfIcon: "person", hint: "Full Name", value: $fullName)
                 CustomTextField(sfIcon: "lock", hint: "password", isPassword: true, value: $password)
                 
-                Button("Forgot Password?") {
-                    
-                }
-                .font(.callout)
-                .fontWeight(.heavy)
-                .tint(.yellow)
-                .hSpacing(.trailing)
+//                Button("Forgot Password?") {
+//                    
+//                }
+//                .font(.callout)
+//                .fontWeight(.heavy)
+//                .tint(.yellow)
+//                .hSpacing(.trailing)
                 
-                GradientButton(title: "Login", icon: "arrow.right") {
+                GradientButton(title: "Continue", icon: "arrow.right") {
                     
                 }
                 .hSpacing(.trailing)
@@ -54,11 +56,11 @@ struct LoginView: View {
             Spacer()
             
             HStack(spacing: 6) {
-                Text("Don't have an account?")
+                Text("Already have an account?")
                     .foregroundStyle(.gray)
                 
-                Button("SignUp") {
-                    showSignUp.toggle()
+                Button("LogIn") {
+                    showSignUp = false 
                 }
                 .fontWeight(.bold)
                 .tint(.yellow)
@@ -72,5 +74,5 @@ struct LoginView: View {
 }
 
 #Preview {
-    ContentView()
+    SignUpView(showSignUp: .constant(true))
 }
