@@ -10,6 +10,8 @@ import SwiftUI
 struct LoginView: View {
     @State private var emailID: String = ""
     @State private var password: String = ""
+    @State private var showForgotPassword: Bool = false
+    @State private var showResetView: Bool = false
     @Binding var showSignUp: Bool
     
     private var isFormValid: Bool {
@@ -35,7 +37,7 @@ struct LoginView: View {
                 CustomTextField(sfIcon: "lock", hint: "password", isPassword: true, value: $password)
                 
                 Button("Forgot Password?") {
-                    
+                    showForgotPassword.toggle()
                 }
                 .font(.callout)
                 .fontWeight(.heavy)
@@ -68,6 +70,16 @@ struct LoginView: View {
         }
         .padding(.vertical)
         .padding(.horizontal, 26)
+        .sheet(isPresented: $showForgotPassword) {
+            if #available(iOS 16.4, *) {
+                ForgotPasswordView(showResetView: $showResetView)
+                    .presentationDetents([.height(300)])
+                    .presentationCornerRadius(30)
+            } else {
+                ForgotPasswordView(showResetView: $showResetView)
+                    .presentationDetents([.height(300)])
+            }
+        }
     }
 }
 
