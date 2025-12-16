@@ -1,20 +1,18 @@
 //
-//  PasswordResetView.swift
+//  OTPView.swift
 //  LoginUI
 //
-//  Created by 멘태 on 12/15/25.
+//  Created by 멘태 on 12/16/25.
 //
 
 import SwiftUI
 
-struct PasswordResetView: View {
-    @State private var password: String = ""
-    @State private var confirmPassword: String = ""
-    
+struct OTPView: View {
+    @Binding var otpText: String
     @Environment(\.dismiss) private var dismiss
     
     private var isFormValid: Bool {
-        return !password.isEmpty && !confirmPassword.isEmpty
+        return !otpText.isEmpty && otpText.count == 6
     }
     
     var body: some View {
@@ -22,21 +20,25 @@ struct PasswordResetView: View {
             Button {
                 dismiss()
             } label: {
-                Image(systemName: "xmark")
+                Image(systemName: "arrow.left")
                     .font(.title2)
                     .foregroundStyle(.gray)
             }
-            .padding(.top, 10)
+            .padding(.top, 15)
             
-            Text("Reset Password?")
+            Text("Enter OTP")
                 .font(.largeTitle)
                 .fontWeight(.heavy)
                 .padding(.top, 5)
             
+            Text("An 6 digit code has been sent to your Email ID.")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundStyle(.gray)
+                .padding(.top, -5)
+            
             VStack(spacing: 26) {
-                CustomTextField(sfIcon: "lock", hint: "Password", value: $password)
-                CustomTextField(sfIcon: "lock", hint: "Confirm Password", value: $confirmPassword)
-                
+                OTPVerificationView(otpText: $otpText)
                 
                 GradientButton(title: "Send Link", icon: "arrow.right") {
                     dismiss()
@@ -46,6 +48,8 @@ struct PasswordResetView: View {
                 .disableWithOpacity(isFormValid)
             }
             .padding(.top, 20)
+            
+            Spacer()
         }
         .padding(.vertical)
         .padding(.horizontal, 26)
@@ -54,5 +58,5 @@ struct PasswordResetView: View {
 }
 
 #Preview {
-    PasswordResetView()
+    ContentView()
 }

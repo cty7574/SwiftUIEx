@@ -19,4 +19,10 @@ extension View {
         self
             .frame(maxHeight: .infinity, alignment: alignment)
     }
+    
+    func disableWithOpacity(_ condition: Bool) -> some View {
+        self
+            .disabled(!condition)
+            .opacity(!condition ? 0.6 : 1)
+    }
 }

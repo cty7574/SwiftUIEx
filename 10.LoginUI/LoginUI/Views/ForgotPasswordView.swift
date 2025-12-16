@@ -10,8 +10,11 @@ import SwiftUI
 struct ForgotPasswordView: View {
     @State private var emailID: String = ""
     @Binding var showResetView: Bool
-    
     @Environment(\.dismiss) private var dismiss
+    
+    private var isFormValid: Bool {
+        return !emailID.isEmpty
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -45,8 +48,7 @@ struct ForgotPasswordView: View {
                     
                 }
                 .hSpacing(.trailing)
-                .opacity(!emailID.isEmpty ? 1 : 0.5)
-                .disabled(emailID.isEmpty)
+                .disableWithOpacity(isFormValid)
             }
             .padding(.top, 20)
         }

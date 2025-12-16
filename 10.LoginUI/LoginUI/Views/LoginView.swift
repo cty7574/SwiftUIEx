@@ -12,6 +12,8 @@ struct LoginView: View {
     @State private var password: String = ""
     @State private var showForgotPassword: Bool = false
     @State private var showResetView: Bool = false
+    @State private var askOTP: Bool = false
+    @State private var otpText: String = ""
     @Binding var showSignUp: Bool
     
     private var isFormValid: Bool {
@@ -45,11 +47,10 @@ struct LoginView: View {
                 .hSpacing(.trailing)
                 
                 GradientButton(title: "Login", icon: "arrow.right") {
-                    
+                    askOTP.toggle()
                 }
                 .hSpacing(.trailing)
-                .opacity(isFormValid ? 1 : 0.5)
-                .disabled(isFormValid)
+                .disableWithOpacity(isFormValid)
             }
             .padding(.top, 20)
             
@@ -87,6 +88,17 @@ struct LoginView: View {
                     .presentationCornerRadius(30)
             } else {
                 PasswordResetView()
+                    .presentationDetents([.height(350)])
+            }
+            
+        }
+        .sheet(isPresented: $askOTP) {
+            if #available(iOS 16.4, *) {
+                OTPView(otpText: $otpText)
+                    .presentationDetents([.height(350)])
+                    .presentationCornerRadius(30)
+            } else {
+                OTPView(otpText: $otpText)
                     .presentationDetents([.height(350)])
             }
             

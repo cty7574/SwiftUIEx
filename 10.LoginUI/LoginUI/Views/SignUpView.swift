@@ -48,8 +48,7 @@ struct SignUpView: View {
                     
                 }
                 .hSpacing(.trailing)
-                .opacity(isFormValid ? 1 : 0.5)
-                .disabled(isFormValid)
+                .disableWithOpacity(isFormValid)
             }
             .padding(.top, 20)
             
