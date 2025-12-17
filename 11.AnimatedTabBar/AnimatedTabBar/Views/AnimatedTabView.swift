@@ -15,12 +15,19 @@ protocol AnimatedTabSelectionProtocol: CaseIterable, Hashable {
 struct AnimatedTabView<Selection: AnimatedTabSelectionProtocol, Content: TabContent<Selection>>: View {
     @Binding var selection: Selection
     @TabContentBuilder<Selection> var content: () -> Content
+    @State private var imageViews: [Selection: UIImageView] = [:]
     
     var body: some View {
         TabView(selection: $selection) {
             content()
         }
         .tabViewStyle(.tabBarOnly)
+        .background {
+            ExtractImageViewsFromTabView {
+                imageViews = $0
+            }
+        }
+        .compositingGroup()
     }
 }
 
