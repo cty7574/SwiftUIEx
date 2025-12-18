@@ -39,6 +39,12 @@ struct ContentView: View {
                     Text(tab.title)
                 }
             }
+        } effects: { tab in
+            switch tab {
+            case .call: [.bounce.up]
+            case .notifications: [.wiggle]
+            case .settings: [.rotate]
+            }
         }
     }
 }

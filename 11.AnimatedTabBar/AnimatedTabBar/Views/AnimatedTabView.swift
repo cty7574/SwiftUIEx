@@ -17,6 +17,8 @@ struct AnimatedTabView<Selection: AnimatedTabSelectionProtocol, Content: TabCont
     @TabContentBuilder<Selection> var content: () -> Content
     @State private var imageViews: [Selection: UIImageView] = [:]
     
+    var effects: (Selection) -> [any DiscreteSymbolEffect & SymbolEffect]
+    
     var body: some View {
         TabView(selection: $selection) {
             content()
@@ -28,6 +30,14 @@ struct AnimatedTabView<Selection: AnimatedTabSelectionProtocol, Content: TabCont
             }
         }
         .compositingGroup()
+        .onChange(of: selection) { oldValue, newValue in
+            let symbolEffects = effects(newValue)
+            guard let imageView = imageViews[newValue] else { return }
+            
+            for effect in symbolEffects {
+                imageView.addSymbolEffect(effect, options: .nonRepeating)
+            }
+        }
     }
 }
 
