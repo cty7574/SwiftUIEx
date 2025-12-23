@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct AnimatedBottomBar<LeadingAction: View, TrailingAction: View, MainAction: View>: View {
+    var highlightWhenEmpty: Bool = true
     var hint: String
     var tint: Color = .green
     
     @Binding var text: String
     @FocusState.Binding var isFocused: Bool
+    @State private var isHighlighting: Bool = false
     
     @ViewBuilder var leadingAction: () -> LeadingAction
     @ViewBuilder var trailingAction: () -> TrailingAction
@@ -62,10 +64,14 @@ struct AnimatedBottomBar<LeadingAction: View, TrailingAction: View, MainAction: 
                 .padding(.bottom, isFocused ? 10 : 0)
                 .padding(.top, isFocused ? 20 : 0)
                 .background {
-                    shape
-                        .fill(.bar)
-                        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 5)
-                        .shadow(color: .black.opacity(0.1), radius: 15, x: 0, y: -5)
+                    ZStack {
+                        highlightingBackgroundView()
+                        
+                        shape
+                            .fill(.bar)
+                            .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 5)
+                            .shadow(color: .black.opacity(0.1), radius: 15, x: 0, y: -5)
+                    }
                 }
                 
                 mainAction()
@@ -88,6 +94,39 @@ struct AnimatedBottomBar<LeadingAction: View, TrailingAction: View, MainAction: 
         .animation(.linear(duration: 1), value: isFocused)
     }
     
+    @ViewBuilder
+    private func highlightingBackgroundView() -> some View {
+        ZStack {
+            let shape: RoundedRectangle = .init(cornerRadius: isFocused ? 25: 30)
+            
+            if !isFocused && text.isEmpty && highlightWhenEmpty {
+                shape
+                    .stroke(tint.gradient, style: .init(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                    .mask {
+                        let clearColors: [Color] = .init(repeating: .clear, count: 4)
+                        
+                        shape
+                            .fill(
+                                AngularGradient(
+                                    colors: clearColors + [.white] + clearColors,
+                                    center: .center,
+                                    angle: .init(degrees: isHighlighting ? 360: 0)
+                                )
+                            )
+                    }
+                    .padding(-2)
+                    .blur(radius: 2)
+                    .onAppear {
+                        withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
+                            isHighlighting = true
+                        }
+                    }
+                    .onDisappear {
+                        isHighlighting = false
+                    }
+            }
+        }
+    }
 }
     
 #Preview {
