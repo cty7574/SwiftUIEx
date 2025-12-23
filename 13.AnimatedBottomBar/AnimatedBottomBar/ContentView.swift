@@ -41,20 +41,34 @@ struct ContentView: View {
                     
                 } label: {
                     Image(systemName: "mic.fill")
-                        .fontWeight(.medium)
                         .foregroundStyle(.black)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .background(fillColor, in: .circle)
                 }
             } trailingAction: {
                 Button {
-                    
+                    if isFocused {
+                        isFocused = false
+                    } else {
+                        print("Mic Action")
+                    }
                 } label: {
-                    Image(systemName: "magnifyingglass")
-                        .fontWeight(.medium)
-                        .foregroundStyle(.black)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(fillColor, in: .circle)
+                    ZStack {
+                        Image(systemName: "checkmark")
+                            .fontWeight(.medium)
+                            .foregroundStyle(.black)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .background(.green.gradient, in: .circle)
+                            .blur(radius: isFocused ? 0 : 5)
+                            .opacity(isFocused ? 1 : 0)
+                        
+                        Image(systemName: "mic.fill")
+                            .foregroundStyle(.black)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .background(fillColor, in: .circle)
+                            .blur(radius: !isFocused ? 0 : 5)
+                            .opacity(!isFocused ? 1 : 0)
+                    }
                 }
             } mainAction: {
                 Button {
