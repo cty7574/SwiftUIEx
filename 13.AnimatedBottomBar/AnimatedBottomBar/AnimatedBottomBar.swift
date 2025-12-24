@@ -12,6 +12,14 @@ struct AnimatedBottomBar<LeadingAction: View, TrailingAction: View, MainAction: 
     var hint: String
     var tint: Color = .green
     
+    var animationDuration: CGFloat {
+        if #available(iOS 26, *) {
+            return 0.22
+        } else {
+            return 0.33
+        }
+    }
+    
     @Binding var text: String
     @FocusState.Binding var isFocused: Bool
     @State private var isHighlighting: Bool = false
@@ -91,7 +99,7 @@ struct AnimatedBottomBar<LeadingAction: View, TrailingAction: View, MainAction: 
             }
         }
         .geometryGroup()
-        .animation(.linear(duration: 1), value: isFocused)
+        .animation(.linear(duration: animationDuration), value: isFocused)
     }
     
     @ViewBuilder
@@ -124,6 +132,7 @@ struct AnimatedBottomBar<LeadingAction: View, TrailingAction: View, MainAction: 
                     .onDisappear {
                         isHighlighting = false
                     }
+                    .transition(.blurReplace)
             }
         }
     }
