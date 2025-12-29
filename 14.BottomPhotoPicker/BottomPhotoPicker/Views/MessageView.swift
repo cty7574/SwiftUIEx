@@ -32,6 +32,10 @@ struct PickerInteractionProperties {
         
         return .zero
     }
+    
+    var animation: Animation {
+        .interpolatingSpring(duration: 0.3, bounce: 0, initialVelocity: 0)
+    }
 }
 
 struct MessageView: View {
@@ -59,7 +63,7 @@ struct MessageView: View {
     func bottomBar() -> some View {
         HStack(alignment: .bottom) {
             Button {
-                
+                properties.showPhotoPicker.toggle()
             } label: {
                 Image(systemName: "plus")
                     .font(.title3)
@@ -81,13 +85,30 @@ struct MessageView: View {
         .padding(.bottom, 10)
         .geometryGroup()
         .padding(.bottom, animatedKeyboardHeight)
-        .animation(.interpolatingSpring(duration: 0.3, bounce: 0, initialVelocity: 0), value: animatedKeyboardHeight)
+        .animation(properties.animation, value: animatedKeyboardHeight)
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillChangeFrameNotification)) { info in
             if let frame = info.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
                 let height: CGFloat = frame.cgRectValue.height
                 if properties.storedKeyboardHeight == 0 {
                     properties.storedKeyboardHeight = max(height - properties.safeArea.bottom, 0)
                 }
+            }
+        }
+        .sheet(isPresented: $properties.showPhotoPicker) {
+            PhotosPicker("", selection: $selectedPhoto)
+                .photosPickerStyle(.inline)
+                .photosPickerDisabledCapabilities([.stagingArea, .sensitivityAnalysisIntervention])
+                .presentationDetents([.height(properties.keyboardHeight), .large])
+                .presentationBackgroundInteraction(.enabled(upThrough: .height(properties.keyboardHeight)))
+        }
+        .onChange(of: properties.showPhotoPicker) { oldValue, newValue in
+            if newValue {
+                isKeyboardActive = false
+            }
+        }
+        .onChange(of: isKeyboardActive) { oldValue, newValue in
+            if newValue {
+                properties.showPhotoPicker = false
             }
         }
     }
