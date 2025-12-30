@@ -52,10 +52,25 @@ struct MessageView: View {
         ScrollView {
             
         }
+        .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom, spacing: 10) {
             bottomBar()
         }
         .ignoresSafeArea(.keyboard, edges: .all)
+        .background {
+            if #available(iOS 26, *) {
+                Rectangle()
+                    .fill(.clear)
+                    .onGeometryChange(for: CGFloat.self) { proxy in
+                        proxy.frame(in: .global).maxY
+                    } action: { newValue in
+                        guard properties.storedKeyboardHeight != 0 else { return }
+                        let height = max(properties.screenSize.height - newValue - properties.safeArea.bottom, 0)
+                        properties.dragOffset = properties.storedKeyboardHeight - height
+                    }
+
+            }
+        }
         .navigationTitle("iJustine")
     }
     
@@ -73,7 +88,8 @@ struct MessageView: View {
                     .contentShape(.circle)
             }
             
-            TextField("Message...", text: $messageText)
+            TextField("Message...", text: $messageText, axis: .vertical)
+                .lineLimit(6)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)
                 .background(.ultraThinMaterial)
@@ -85,6 +101,7 @@ struct MessageView: View {
         .padding(.bottom, 10)
         .geometryGroup()
         .padding(.bottom, animatedKeyboardHeight)
+        .offset(y: isKeyboardActive ? properties.dragOffset : 0)
         .animation(properties.animation, value: animatedKeyboardHeight)
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillChangeFrameNotification)) { info in
             if let frame = info.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
