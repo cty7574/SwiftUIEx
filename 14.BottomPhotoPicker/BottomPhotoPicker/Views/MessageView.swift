@@ -72,6 +72,7 @@ struct MessageView: View {
             }
         }
         .navigationTitle("iJustine")
+        .toolbarTitleDisplayMode(.inlineLarge)
     }
     
     @ViewBuilder
@@ -81,9 +82,13 @@ struct MessageView: View {
                 properties.showPhotoPicker.toggle()
             } label: {
                 Image(systemName: "plus")
-                    .font(.title3)
+                    .foregroundStyle(.black)
                     .fontWeight(.medium)
                     .frame(width: 40, height: 40)
+                    .animation(properties.animation) { content in
+                        content
+                            .rotationEffect(.init(degrees: properties.showPhotoPicker ? 45: 0))
+                    }
                     .background(.ultraThinMaterial, in: .circle)
                     .contentShape(.circle)
             }
@@ -122,11 +127,15 @@ struct MessageView: View {
             if newValue {
                 isKeyboardActive = false
             }
+            
+            properties.dragOffset = 0
         }
         .onChange(of: isKeyboardActive) { oldValue, newValue in
             if newValue {
                 properties.showPhotoPicker = false
             }
+            
+            properties.dragOffset = 0
         }
     }
 }
