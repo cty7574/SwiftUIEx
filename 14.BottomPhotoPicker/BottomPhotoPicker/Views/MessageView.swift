@@ -122,6 +122,8 @@ struct MessageView: View {
                 .photosPickerDisabledCapabilities([.stagingArea, .sensitivityAnalysisIntervention])
                 .presentationDetents([.height(properties.keyboardHeight), .large])
                 .presentationBackgroundInteraction(.enabled(upThrough: .height(properties.keyboardHeight)))
+                .interactiveDismissDisabled(true)
+                .background(DisableInteractiveDismiss())
         }
         .onChange(of: properties.showPhotoPicker) { oldValue, newValue in
             if newValue {
@@ -137,6 +139,33 @@ struct MessageView: View {
             
             properties.dragOffset = 0
         }
+    }
+}
+
+struct DisableInteractiveDismiss: UIViewRepresentable {
+    func makeUIView(context: Context) -> some UIView {
+        let view: UIView = UIView()
+        view.backgroundColor = .clear
+        
+        DispatchQueue.main.async {
+            if let pickerController = view.viewController?.children.first as? PHPickerViewController {
+                pickerController.isModalInPresentation = true
+            }
+        }
+        
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIViewType, context: Context) {
+        
+    }
+}
+
+extension UIView {
+    var viewController: UIViewController? {
+        sequence(first: self) { $0.next }
+            .first(where: { $0 is UIViewController })
+            .flatMap { $0 as? UIViewController }
     }
 }
 
