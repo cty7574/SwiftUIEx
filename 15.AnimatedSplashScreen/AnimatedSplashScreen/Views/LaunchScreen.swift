@@ -8,21 +8,25 @@
 import SwiftUI
 
 struct LaunchScreen<RootView: View, Logo: View>: Scene {
+    var config: LaunchScreenConfig = .init()
+    
     @ViewBuilder var rootContent: RootView
     @ViewBuilder var logo: () -> Logo
     
     var body: some Scene {
         WindowGroup {
             rootContent
-                .modifier(LaunchScreenModifier(logo: logo))
+                .modifier(LaunchScreenModifier(config: config, logo: logo))
         }
     }
 }
 
 fileprivate struct LaunchScreenModifier<Logo: View>: ViewModifier {
+    var config: LaunchScreenConfig
+    @State private var splashWindow: UIWindow?
+    
     @ViewBuilder var logo: Logo
     @Environment(\.scenePhase) private var scenePhase
-    @State private var splashWindow: UIWindow?
     
     func body(content: Content) -> some View {
         content
@@ -43,7 +47,7 @@ fileprivate struct LaunchScreenModifier<Logo: View>: ViewModifier {
                     window.isHidden = false
                     window.isUserInteractionEnabled = true
                     
-                    let rootViewController: UIHostingController = .init(rootView: LaunchScreenView {
+                    let rootViewController: UIHostingController = .init(rootView: LaunchScreenView(config: config) {
                         logo
                     })
                     rootViewController.view.backgroundColor = .clear
@@ -65,10 +69,33 @@ fileprivate struct LaunchScreenModifier<Logo: View>: ViewModifier {
     }
 }
 
+struct LaunchScreenConfig {
+    var initialDelay: Double = 0.35
+    var backgroundColor: Color = .black
+    var logoBackgroundColor: Color = .white
+    var scaling: CGFloat = 4
+    var forceHideLogo: Bool = false
+    var animationDuration: CGFloat = 1
+}
+
 fileprivate struct LaunchScreenView<Logo: View>: View {
+    var config: LaunchScreenConfig
     @ViewBuilder var logo: Logo
     
     var body: some View {
-        
+        Rectangle()
+            .fill(config.backgroundColor)
+            .mask {
+                Rectangle()
+                    .overlay {
+                        logo
+                            .blendMode(.destinationOut)
+                    }
+            }
+            .background {
+                Rectangle()
+                    .fill(config.logoBackgroundColor)
+            }
+            .ignoresSafeArea()
     }
 }

@@ -11,10 +11,11 @@ import SwiftUI
 struct AnimatedSplashScreenApp: App {
     var body: some Scene {
         LaunchScreen {
-            Image(.launchScreenLogo)
-        } logo: {
             ContentView()
+        } logo: {
+            Image(.launchScreenLogo)
         }
+
     }
 }
 
