@@ -81,7 +81,7 @@ struct LaunchScreenConfig {
 fileprivate struct LaunchScreenView<Logo: View>: View {
     var config: LaunchScreenConfig
     @ViewBuilder var logo: Logo
-    
+     
     var body: some View {
         Rectangle()
             .fill(config.backgroundColor)

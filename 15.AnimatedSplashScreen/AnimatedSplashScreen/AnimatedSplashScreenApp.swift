@@ -14,6 +14,8 @@ struct AnimatedSplashScreenApp: App {
             ContentView()
         } logo: {
             Image(.launchScreenLogo)
+                .resizable()
+                .frame(width: 100, height: 100)
         }
 
     }
