@@ -49,6 +49,9 @@ fileprivate struct LaunchScreenModifier<Logo: View>: ViewModifier {
                     
                     let rootViewController: UIHostingController = .init(rootView: LaunchScreenView(config: config) {
                         logo
+                    } isCompleted: {
+                        window.isHidden = true
+                        window.isUserInteractionEnabled = false
                     })
                     rootViewController.view.backgroundColor = .clear
                     window.rootViewController = rootViewController
@@ -75,27 +78,59 @@ struct LaunchScreenConfig {
     var logoBackgroundColor: Color = .white
     var scaling: CGFloat = 4
     var forceHideLogo: Bool = false
-    var animationDuration: CGFloat = 1
+    var animation: Animation = .smooth(duration: 1, extraBounce: 1)
 }
 
 fileprivate struct LaunchScreenView<Logo: View>: View {
     var config: LaunchScreenConfig
     @ViewBuilder var logo: Logo
+    @State private var scaleDown: Bool = false
+    @State private var scaleUp: Bool = false
+    var isCompleted: () -> Void
      
     var body: some View {
         Rectangle()
             .fill(config.backgroundColor)
             .mask {
-                Rectangle()
-                    .overlay {
-                        logo
-                            .blendMode(.destinationOut)
-                    }
+                GeometryReader { proxy in
+                    let size = proxy.size.applying(.init(scaleX: config.scaling, y: config.scaling))
+                    
+                    Rectangle()
+                        .overlay {
+                            logo
+                                .blendMode(.destinationOut)
+                                .animation(.smooth(duration: 0.3, extraBounce: 0)) { content in
+                                    content
+                                        .scaleEffect(scaleDown ? 0.8 : 1)
+                                }
+                                .visualEffect { [scaleUp] content, proxy in
+                                    let scaleX: CGFloat = size.width / proxy.size.width
+                                    let scaleY: CGFloat = size.height / proxy.size.height
+                                    let maxScale = Swift.max(scaleX, scaleY)
+                                    
+                                    return content
+                                        .scaleEffect(scaleUp ? maxScale : 1)
+                                }
+                        }
+                }
             }
             .background {
                 Rectangle()
                     .fill(config.logoBackgroundColor)
             }
             .ignoresSafeArea()
+            .task {
+                guard !scaleDown else { return }
+                
+                try? await Task.sleep(for: .seconds(config.initialDelay))
+                scaleDown = true
+                
+                try? await Task.sleep(for: .seconds(0.1))
+                withAnimation(config.animation) {
+                    scaleUp = true
+                } completion: {
+                    isCompleted()
+                }
+            }
     }
 }
