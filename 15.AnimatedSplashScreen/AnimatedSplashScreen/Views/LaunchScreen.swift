@@ -53,6 +53,7 @@ fileprivate struct LaunchScreenModifier<Logo: View>: ViewModifier {
                         window.isHidden = true
                         window.isUserInteractionEnabled = false
                     })
+                    window.tag = 1009
                     rootViewController.view.backgroundColor = .clear
                     window.rootViewController = rootViewController
                     
@@ -98,6 +99,7 @@ fileprivate struct LaunchScreenView<Logo: View>: View {
                     Rectangle()
                         .overlay {
                             logo
+                                .blur(radius: config.forceHideLogo ? 0 : (scaleUp ? 15 : 0))
                                 .blendMode(.destinationOut)
                                 .animation(.smooth(duration: 0.3, extraBounce: 0)) { content in
                                     content
@@ -114,9 +116,11 @@ fileprivate struct LaunchScreenView<Logo: View>: View {
                         }
                 }
             }
+            .opacity(config.forceHideLogo ? 1 : (scaleUp ? 0 : 1))
             .background {
                 Rectangle()
                     .fill(config.logoBackgroundColor)
+                    .opacity(scaleUp ? 0 : 1)
             }
             .ignoresSafeArea()
             .task {
@@ -126,7 +130,7 @@ fileprivate struct LaunchScreenView<Logo: View>: View {
                 scaleDown = true
                 
                 try? await Task.sleep(for: .seconds(0.1))
-                withAnimation(config.animation) {
+                withAnimation(config.animation, completionCriteria: .logicallyComplete) {
                     scaleUp = true
                 } completion: {
                     isCompleted()

@@ -10,14 +10,12 @@ import SwiftUI
 @main
 struct AnimatedSplashScreenApp: App {
     var body: some Scene {
-        LaunchScreen {
+        LaunchScreen(config: .init(forceHideLogo: true)) {
             ContentView()
         } logo: {
             Image(.launchScreenLogo)
-                .resizable()
-                .frame(width: 100, height: 100)
+                .font(.system(size: 100))
         }
-
     }
 }
 
