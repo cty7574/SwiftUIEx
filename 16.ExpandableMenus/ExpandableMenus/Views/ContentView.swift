@@ -31,7 +31,14 @@ struct ContentView: View {
             MiniatureActionView(animation: animation, isPresented: $isPresented) {
                 actionContent()
             } background: {
-                
+                ZStack {
+                    Capsule()
+                        .fill(.background)
+                    
+                    Capsule()
+                        .fill(.ultraThinMaterial)
+                }
+                .shadow(color: .gray.opacity(0.5), radius: 1)
             }
 
         }
