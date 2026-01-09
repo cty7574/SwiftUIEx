@@ -46,7 +46,12 @@ struct MiniatureActionView<Actions: View, Background: View>: View {
             }
             .background {
                 background
-                    .frame(width: minimisedButtonSize.width, height: minimisedButtonSize.height)
+                    .frame(
+                        width: isPresented ? nil : minimisedButtonSize.width,
+                        height: isPresented ? nil :minimisedButtonSize.height
+                    )
+                    .opacity(isPresented ? 0 : 1)
+                    .blur(radius: isPresented ? 30 : 0)
             }
             .fixedSize()
             .frame(

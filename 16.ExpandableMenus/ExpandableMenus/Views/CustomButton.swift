@@ -12,6 +12,8 @@ struct CustomButton: View {
     var symbol: String
     var action: () -> Void = {}
     
+    @Binding var isPresented: Bool
+    
     var body: some View {
         Button(action: action) {
             HStack(spacing: 10) {
@@ -22,10 +24,22 @@ struct CustomButton: View {
         }
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.background, in: .capsule)
+        .opacity(isPresented ? 1 : 0)
+        .background {
+            ZStack {
+                Rectangle()
+                    .fill(.primary)
+                    .opacity(isPresented ? 0 : 1)
+                
+                Rectangle()
+                    .fill(.background)
+                    .opacity(isPresented ? 1 : 0)
+            }
+            .clipShape(.capsule)
+        }
     }
 }
 
 #Preview {
-    CustomButton(title: "title", symbol: "globe")
+    CustomButton(title: "title", symbol: "globe", isPresented: .constant(false))
 }
