@@ -8,14 +8,26 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var message: String = ""
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            ScrollView {
+                
+            }
+            .navigationTitle("iJustine")
+            .safeAreaInset(edge: .bottom) {
+                ChatBottomBar(message: $message) {
+                    
+                } onRecordingStart: {
+                    
+                } onRecordingFinished: { discarded in
+                    
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 5)
+            }
         }
-        .padding()
     }
 }
 
