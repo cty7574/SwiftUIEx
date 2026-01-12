@@ -10,6 +10,9 @@ import SwiftUI
 struct ChatBottomBar: View {
     var hint: String = "Type your message..."
     @Binding var message: String
+    @GestureState private var isHolding: Bool = false
+    @GestureState private var isRecording: Bool = false
+    @GestureState private var recorderOffset: CGFloat = 0.0
     
     var sendMessage: () -> Void
     var onRecordingStart: () -> Void
@@ -46,10 +49,45 @@ struct ChatBottomBar: View {
             Image(systemName: mainActionSymbol)
                 .font(.system(size: 20, weight: .medium))
                 .foregroundStyle(.white)
-                .contentTransition(.symbolEffect(.replace, options: .default))
+                .contentTransition(.symbolEffect(.replace, options: .default.speed(1.2)))
                 .frame(width: 48, height: 48)
                 .background(.blue.gradient, in: .circle)
+                .scaleEffect(isHolding ? 1.3 : 1)
+                .offset(x: recorderOffset)
                 .gesture(sendMessageGesture, isEnabled: !message.isEmpty)
+                .gesture(
+                    LongPressGesture(minimumDuration: 0.3, maximumDistance: 0)
+                        .sequenced(before: DragGesture(minimumDistance: 10))
+                        .updating($isHolding, body: { _, out, _ in
+                            out = true
+                        })
+                        .updating($isRecording, body: { value, out, _ in
+                            if case .second(_, _) = value {
+                                out = true
+                            }
+                        })
+                        .updating($recorderOffset, body: { value, out, _ in
+                            if case let .second(_, gesture) = value, let gesture {
+                                let translation = gesture.translation.width
+                                let cappedOffset = max(min(translation, 0), -200)
+                                out = cappedOffset
+                            }
+                        }),
+                    isEnabled: message.isEmpty
+                )
+        }
+        .animation(.interpolatingSpring(duration: 0.4), value: isHolding)
+        .animation(.interactiveSpring(duration: 0.3), value: recorderOffset == 0)
+        .onChange(of: isRecording) { oldValue, newValue in
+            if newValue {
+                onRecordingStart()
+            } else {
+                if -recorderOffset > 50 {
+                    onRecordingFinished(true)
+                } else {
+                    onRecordingFinished(false)
+                }
+            }
         }
     }
 }
