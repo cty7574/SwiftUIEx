@@ -18,11 +18,17 @@ struct ContentView: View {
             .navigationTitle("iJustine")
             .safeAreaInset(edge: .bottom) {
                 ChatBottomBar(message: $message) {
-                    
+                    print("Send Message")
                 } onRecordingStart: {
-                    
+                    print("Start Recording")
                 } onRecordingFinished: { discarded in
-                    
+                    if discarded {
+                        print("Discard Recording")
+                    } else {
+                        print("Send Recording")
+                    }
+                } addMenu: {
+                    print("Open Menu")
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 5)

@@ -16,13 +16,24 @@ struct ChatBottomBar: View {
     var onRecordingFinished: (_ discarded: Bool) -> Void
     var addMenu: () -> Void = {}
     
+    var sendMessageGesture: some Gesture {
+        TapGesture(count: 1).onEnded { _ in
+            sendMessage()
+        }
+    }
+    
+    var mainActionSymbol: String {
+        message.isEmpty ? "mic.fill" : "paperplane.fill"
+    }
+    
     var body: some View {
         HStack(spacing: 10) {
             HStack(spacing: 6) {
                 Button(action: addMenu) {
                     Image(systemName: "plus")
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(Color.primary)
+                        .frame(width: 30)
                 }
                 
                 TextField(hint, text: $message)
@@ -32,11 +43,13 @@ struct ChatBottomBar: View {
             .frame(height: 48)
             .background(.ultraThinMaterial, in: .capsule)
             
-            Image(systemName: "mic.fill")
+            Image(systemName: mainActionSymbol)
                 .font(.system(size: 20, weight: .medium))
                 .foregroundStyle(.white)
+                .contentTransition(.symbolEffect(.replace, options: .default))
                 .frame(width: 48, height: 48)
                 .background(.blue.gradient, in: .circle)
+                .gesture(sendMessageGesture, isEnabled: !message.isEmpty)
         }
     }
 }
