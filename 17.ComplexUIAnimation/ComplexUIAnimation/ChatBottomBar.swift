@@ -13,6 +13,7 @@ struct ChatBottomBar: View {
     @GestureState private var isHolding: Bool = false
     @GestureState private var isRecording: Bool = false
     @GestureState private var recorderOffset: CGFloat = 0.0
+    @State private var lastRecorderOffset: CGFloat = 0.0
     
     var sendMessage: () -> Void
     var onRecordingStart: () -> Void
@@ -64,6 +65,8 @@ struct ChatBottomBar: View {
                         .updating($isRecording, body: { value, out, _ in
                             if case .second(_, _) = value {
                                 out = true
+                            } else {
+                                out = false
                             }
                         })
                         .updating($recorderOffset, body: { value, out, _ in
@@ -82,11 +85,19 @@ struct ChatBottomBar: View {
             if newValue {
                 onRecordingStart()
             } else {
-                if -recorderOffset > 50 {
+                print("recorderOffset: \(-lastRecorderOffset)")
+                if -lastRecorderOffset > 50 {
                     onRecordingFinished(true)
                 } else {
                     onRecordingFinished(false)
                 }
+                
+                lastRecorderOffset = 0
+            }
+        }
+        .onChange(of: recorderOffset) { oldValue, newValue in
+            if isRecording {
+                lastRecorderOffset = newValue
             }
         }
     }
