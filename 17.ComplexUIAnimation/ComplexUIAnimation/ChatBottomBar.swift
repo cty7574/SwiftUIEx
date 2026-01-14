@@ -43,6 +43,8 @@ struct ChatBottomBar: View {
                 
                 TextField(hint, text: $message)
                     .lineLimit(5)
+                    .opacity(isRecording ? 0 : 1)
+                    .animation(.interpolatingSpring(duration: 0.3), value: isRecording)
             }
             .padding(.horizontal, 12)
             .frame(height: 48)
