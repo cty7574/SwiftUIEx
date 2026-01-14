@@ -27,7 +27,8 @@ struct ChatBottomBar: View {
     }
     
     var mainActionSymbol: String {
-        message.isEmpty ? "mic.fill" : "paperplane.fill"
+        let recordingSymbol: String = isRecording ? "waveform" : "mic.fill"
+        return message.isEmpty ? recordingSymbol : "paperplane.fill"
     }
     
     var body: some View {
@@ -85,7 +86,6 @@ struct ChatBottomBar: View {
             if newValue {
                 onRecordingStart()
             } else {
-                print("recorderOffset: \(-lastRecorderOffset)")
                 if -lastRecorderOffset > 50 {
                     onRecordingFinished(true)
                 } else {
