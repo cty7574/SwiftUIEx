@@ -44,6 +44,12 @@ struct ChatBottomBar: View {
                 TextField(hint, text: $message)
                     .lineLimit(5)
                     .opacity(isRecording ? 0 : 1)
+                    .overlay(alignment: .trailing) {
+                        if isRecording {
+                            SlideToCancelText(text: "Slide to cancel")
+                                .padding(.trailing, 10)
+                        }
+                    }
                     .animation(.interpolatingSpring(duration: 0.3), value: isRecording)
             }
             .padding(.horizontal, 12)
