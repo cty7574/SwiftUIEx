@@ -15,6 +15,7 @@ struct ChatBottomBar: View {
     @GestureState private var recorderOffset: CGFloat = 0.0
     @State private var lastRecorderOffset: CGFloat = 0.0
     @State private var recorderStartTimeStamp: Date = .now
+    @State private var disableBottomBar: Bool = false
     
     var sendMessage: () -> Void
     var onRecordingStart: () -> Void
@@ -35,12 +36,11 @@ struct ChatBottomBar: View {
     var body: some View {
         HStack(spacing: 10) {
             HStack(spacing: 6) {
-                Button(action: addMenu) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundStyle(Color.primary)
-                        .frame(width: 30)
-                }
+                AnimatedMenuButton(
+                    disableBottomBar: $disableBottomBar,
+                    isRecording: isRecording,
+                    action: addMenu
+                )
                 
                 TextField(hint, text: $message)
                     .lineLimit(5)
