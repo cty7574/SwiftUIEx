@@ -14,6 +14,7 @@ struct ChatBottomBar: View {
     @GestureState private var isRecording: Bool = false
     @GestureState private var recorderOffset: CGFloat = 0.0
     @State private var lastRecorderOffset: CGFloat = 0.0
+    @State private var recorderStartTimeStamp: Date = .now
     
     var sendMessage: () -> Void
     var onRecordingStart: () -> Void
@@ -46,8 +47,17 @@ struct ChatBottomBar: View {
                     .opacity(isRecording ? 0 : 1)
                     .overlay(alignment: .trailing) {
                         if isRecording {
-                            SlideToCancelText(text: "Slide to cancel")
-                                .padding(.trailing, 10)
+                            HStack(spacing: 0) {
+                                Text(recorderStartTimeStamp, style: .timer)
+                                    .font(.callout)
+                                    .fontWeight(.medium)
+                                    .foregroundStyle(.gray)
+                                
+                                Spacer()
+                                
+                                SlideToCancelText(text: "Slide to cancel")
+                            }
+                            .padding(.trailing, 10)
                         }
                     }
                     .animation(.interpolatingSpring(duration: 0.3), value: isRecording)
@@ -55,6 +65,12 @@ struct ChatBottomBar: View {
             .padding(.horizontal, 12)
             .frame(height: 48)
             .background(.ultraThinMaterial, in: .capsule)
+            .mask {
+                Rectangle()
+                    .padding(-50)
+                    .padding(.trailing, abs(recorderOffset))
+            }
+            .shadow(radius: 1)
             
             Image(systemName: mainActionSymbol)
                 .font(.system(size: 20, weight: .medium))
@@ -92,6 +108,7 @@ struct ChatBottomBar: View {
         .animation(.interactiveSpring(duration: 0.3), value: recorderOffset == 0)
         .onChange(of: isRecording) { oldValue, newValue in
             if newValue {
+                recorderStartTimeStamp = .now
                 onRecordingStart()
             } else {
                 if -lastRecorderOffset > 50 {
