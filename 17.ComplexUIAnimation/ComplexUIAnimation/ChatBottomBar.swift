@@ -112,6 +112,7 @@ struct ChatBottomBar: View {
                 onRecordingStart()
             } else {
                 if -lastRecorderOffset > 50 {
+                    disableBottomBar = true
                     onRecordingFinished(true)
                 } else {
                     onRecordingFinished(false)
@@ -123,6 +124,14 @@ struct ChatBottomBar: View {
         .onChange(of: recorderOffset) { oldValue, newValue in
             if isRecording {
                 lastRecorderOffset = newValue
+            }
+        }
+        .overlay {
+            if disableBottomBar {
+                Rectangle()
+                    .foregroundStyle(.clear)
+                    .contentShape(.rect)
+                    .transition(.identity)
             }
         }
     }
