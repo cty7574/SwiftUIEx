@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var showToast: Bool = false
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            List {
+                Button("Show Toast") {
+                    showToast.toggle()
+                }
+                .dynamicIslandToast(isPresented: $showToast, value: .example1)
+            }
+            .navigationTitle("Dynamic Island Toast")
         }
-        .padding()
     }
 }
 
