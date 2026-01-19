@@ -27,11 +27,16 @@ struct DynamicIslandToastViewModifier: ViewModifier {
         guard let windowScene = mainWindow.windowScene else { return }
         let overlayWindow = PassThroughWindow(windowScene: windowScene)
         
-        overlayWindow.backgroundColor = .clear
-        overlayWindow.isHidden = false
-        overlayWindow.isUserInteractionEnabled = true
-        createRootController(overlayWindow)
-        self.overlayWindow = overlayWindow
+        if let window = windowScene.windows.first(where: { $0.tag == 1009 }) as? PassThroughWindow {
+            print("Window is already exisiting.")
+            self.overlayWindow = window
+        } else {
+            overlayWindow.backgroundColor = .clear
+            overlayWindow.isHidden = false
+            overlayWindow.isUserInteractionEnabled = true
+            createRootController(overlayWindow)
+            self.overlayWindow = overlayWindow
+        }
     }
     
     private func createRootController(_ window: PassThroughWindow) {
