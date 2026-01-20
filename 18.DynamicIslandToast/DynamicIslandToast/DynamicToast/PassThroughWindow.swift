@@ -7,7 +7,11 @@
 
 import SwiftUI
 
+@Observable
 final class PassThroughWindow: UIWindow {
+    var toast: Toast?
+    var isPresented: Bool = false
+    
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         guard let hitView = super.hitTest(point, with: event),
               let rootView = rootViewController?.view else {

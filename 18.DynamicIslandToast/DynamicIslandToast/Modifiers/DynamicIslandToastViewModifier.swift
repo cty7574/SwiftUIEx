@@ -21,6 +21,16 @@ struct DynamicIslandToastViewModifier: ViewModifier {
                     createOverlayWindow(mainWindow)
                 }
             }
+            .onChange(of: isPresented) { oldValue, newValue in
+                guard let overlayWindow else { return }
+                
+                if newValue {
+                    overlayWindow.toast = value
+                }
+                
+                print("change overlayWindow.isPresented: \(overlayWindow.isPresented)")
+                overlayWindow.isPresented = newValue
+            }
     }
     
     private func createOverlayWindow(_ mainWindow: UIWindow) {
@@ -34,15 +44,18 @@ struct DynamicIslandToastViewModifier: ViewModifier {
             overlayWindow.backgroundColor = .clear
             overlayWindow.isHidden = false
             overlayWindow.isUserInteractionEnabled = true
+            overlayWindow.tag = 1009
             createRootController(overlayWindow)
+            
             self.overlayWindow = overlayWindow
         }
     }
     
     private func createRootController(_ window: PassThroughWindow) {
-        let hostingController = CustomHostingView(rootView: ToastView())
+        let hostingController = CustomHostingView(rootView: ToastView(window: window))
         hostingController.view.backgroundColor = .clear
         window.rootViewController = hostingController
+        
         self.overlayController = hostingController
     }
 }
