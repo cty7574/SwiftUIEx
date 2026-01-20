@@ -23,7 +23,7 @@ struct ToastView: View {
             let dynamicIslandHeight: CGFloat = 36
             let topOffset: CGFloat = 11 + (max(safeArea.top - 59, 0))
             
-            let expandedWidth = size.width - 20
+            let expandedWidth = max(size.width - 20, 1)
             let expandedHeight: CGFloat = 90
             let scaleX: CGFloat = isExpanded ? 1 : (dynamicIslandWidth / expandedWidth)
             let scaleY: CGFloat = isExpanded ? 1 : (dynamicIslandHeight / expandedHeight)
