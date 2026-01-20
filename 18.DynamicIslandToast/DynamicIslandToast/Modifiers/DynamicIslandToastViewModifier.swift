@@ -28,7 +28,6 @@ struct DynamicIslandToastViewModifier: ViewModifier {
                     overlayWindow.toast = value
                 }
                 
-                print("change overlayWindow.isPresented: \(overlayWindow.isPresented)")
                 overlayWindow.isPresented = newValue
             }
     }
