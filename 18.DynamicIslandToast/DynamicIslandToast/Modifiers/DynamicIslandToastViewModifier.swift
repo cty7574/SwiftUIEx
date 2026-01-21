@@ -29,6 +29,13 @@ struct DynamicIslandToastViewModifier: ViewModifier {
                 }
                 
                 overlayWindow.isPresented = newValue
+                overlayController?.isStatusBarHidden = newValue
+            }
+            .onChange(of: overlayWindow?.isPresented) { oldValue, newValue in
+                if let newValue, let overlayWindow,
+                   overlayWindow.toast?.id == value.id, newValue != isPresented {
+                    isPresented = false 
+                }
             }
     }
     

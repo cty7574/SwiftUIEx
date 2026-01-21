@@ -50,6 +50,14 @@ struct ToastView: View {
                             .opacity(haveDynamicIsland ? (isExpanded ? 1 : 0) : 1)
                     }
                     .geometryGroup()
+                    .contentShape(.rect)
+                    .gesture(
+                        DragGesture().onEnded { value in
+                            if value.translation.height < 0 {
+                                window.isPresented = false 
+                            }
+                        }
+                    )
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .ignoresSafeArea()
