@@ -19,12 +19,13 @@ struct ToastView: View {
             let safeArea = proxy.safeAreaInsets
             let size = proxy.size
             
+            let haveDynamicIsland: Bool = safeArea.top >= 59
             let dynamicIslandWidth: CGFloat = 120
             let dynamicIslandHeight: CGFloat = 36
             let topOffset: CGFloat = 11 + (max(safeArea.top - 59, 0))
             
             let expandedWidth = max(size.width - 20, 1)
-            let expandedHeight: CGFloat = 90
+            let expandedHeight: CGFloat = haveDynamicIsland ? 90 : 70
             let scaleX: CGFloat = isExpanded ? 1 : (dynamicIslandWidth / expandedWidth)
             let scaleY: CGFloat = isExpanded ? 1 : (dynamicIslandHeight / expandedHeight)
             
@@ -32,7 +33,7 @@ struct ToastView: View {
                 ConcentricRectangle(corners: .concentric(minimum: .fixed(30)), isUniform: true)
                     .fill(.black)
                     .overlay {
-                        toastContent()
+                        toastContent(haveDynamicIsland)
                             .frame(width: expandedWidth, height: expandedHeight)
                             .scaleEffect(x: scaleX, y: scaleY)
                     }
@@ -40,10 +41,13 @@ struct ToastView: View {
                         width: isExpanded ? expandedWidth : dynamicIslandWidth,
                         height: isExpanded ? expandedHeight : dynamicIslandHeight
                     )
-                    .offset(y: topOffset)
+                    .offset(
+                        y: haveDynamicIsland ? topOffset : (isExpanded ? safeArea.top + 10 : -80)
+                    )
+                    .opacity(haveDynamicIsland ? 1 : (isExpanded ? 1 : 0))
                     .animation(.linear(duration: 0.02).delay(isExpanded ? 0 : 0.28)) { content in
                         content
-                            .opacity(isExpanded ? 1 : 0)
+                            .opacity(haveDynamicIsland ? (isExpanded ? 1 : 0) : 1)
                     }
                     .geometryGroup()
             }
@@ -54,7 +58,7 @@ struct ToastView: View {
     }
     
     @ViewBuilder
-    private func toastContent() -> some View {
+    private func toastContent(_ haveDynamicIsland: Bool) -> some View {
         if let toast = window.toast {
             HStack(spacing: 10) {
                 Image(systemName: toast.symbol)
@@ -64,7 +68,9 @@ struct ToastView: View {
                     .frame(width: 50)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Spacer()
+                    if haveDynamicIsland {
+                        Spacer()
+                    }
                     
                     Text(toast.title)
                         .font(.callout)
@@ -76,7 +82,7 @@ struct ToastView: View {
                         .foregroundStyle(.white.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 12)
+                .padding(.bottom, haveDynamicIsland ? 12 : 0)
                 .lineLimit(1)
             }
             .padding(.horizontal, 20)
